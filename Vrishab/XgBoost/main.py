@@ -29,10 +29,14 @@ def main():
         (train_data, test_data) = create_train_test_split(blocks, split_conf)
 
         xgboost_service = xgBoostService(train_data, test_data, columns)
-        xgboost_service.build_pandas()
-        xgboost_service.process()
+        
+        # xgboost_service.process()
+        # print('role 1 done')
 
-        print('role 1 done')
+        xgboost_service.process_hyperparams_tuning()
+        print('role 2 done')
+
+        xgboost_service.flush_stream_to_file()
     except Exception as err:
         print('{fn}: err: {err}'.format(fn = function_name, err = err))
         raise err
