@@ -17,3 +17,7 @@ print(parent_dir)
 
 import config
 config.createConfig()
+
+import pandas as pd
+df = pd.read_csv(parent_dir + '/csv_result-electricity-normalized.csv')
+print(df.corr())
