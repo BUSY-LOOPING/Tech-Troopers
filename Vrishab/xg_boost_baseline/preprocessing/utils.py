@@ -117,7 +117,7 @@ def split_data(X, y, isCategorical=None):
     num_test = min(X_test.shape[0], 50000)
     
     X_val, y_val = X_val[:num_val], y_val[:num_val]
-    X_test, y_test = X_test[:num_val], y_test[:num_test]
+    X_test, y_test = X_test[:num_test], y_test[:num_test]
 
     return (X_train, y_train), (X_val, y_val), (X_test, y_test)
 
