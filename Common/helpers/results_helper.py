@@ -5,6 +5,8 @@ import pickle
 import nbformat
 from nbconvert.preprocessors import ExecutePreprocessor
 
+import re
+
 import os
 import sys
 
@@ -75,13 +77,15 @@ warnings.filterwarnings("ignore")
 
 def read_csv(file_path):
     line_list = []
-    line_list.append("df = pd.read_csv('{file}')".format(file = file_path))
+    line_list.append("df = pd.read_csv('{file}')".format(file =  re.sub(r'\\', r'\\\\', file_path)))
     line_list.append("df.dropna(axis=1, how='all')")
     line_list.append("df.head()")
     return "\n".join(line_list)
 
 def build_ipynb(csv_path, result_path, file_name):
     try:
+        file_path = file_helper.create_path_from_params(result_path, file_name + '.ipynb')
+
         #create the ipynb
         nb = nbformat.v4.new_notebook()
         initial_cell_content = initial_text
@@ -92,13 +96,28 @@ def build_ipynb(csv_path, result_path, file_name):
         cell = nbformat.v4.new_code_cell(read_csv(csv_path))
         nb.cells.append(cell)
 
-        with open(file_helper.create_path_from_params(result_path, file_name + '.ipynb'), 'w') as f:
+        cell = nbformat.v4.new_code_cell("df.info()")
+        with open(file_path, 'w') as f:
             nbformat.write(nb, f)
 
         pass
+        return file_path
     except Exception as err:
         print('err building ipynb', err)
-        raise err        
+        raise err
+
+def execute_ipynb(file_path):
+    # Read the notebook from file
+    with open(file_path, 'r') as f:
+        nb = nbformat.read(f, as_version=4)
+
+    # Execute the notebook
+    ep = ExecutePreprocessor(timeout=-1)
+    ep.preprocess(nb, {'metadata': {'path': ''}})
+
+    # Write the executed notebook to file
+    with open(file_path, 'w') as f:
+        nbformat.write(nb, f)       
 
 def build_clf_num_ipynb(cv_path):
     try:

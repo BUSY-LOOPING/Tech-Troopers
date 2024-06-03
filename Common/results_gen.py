@@ -5,6 +5,9 @@ from workers import result_worker
 
 
 if __name__ == '__main__':
+    file_helper.drop_and_create_dir(globals.results_folder_path)
+    file_helper.drop_and_create_dir(globals.results_folder_temp_path)
+
     for mode,v in globals.learn_type_cat_dict.items():
         print('processing for {k}'.format(k=mode))
         if not v:

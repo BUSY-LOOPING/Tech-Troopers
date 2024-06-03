@@ -22,7 +22,8 @@ def result_worker(mode, algo_type, file_dict):
             results_temp_csv_path = file_helper.create_path_from_params(mode_results_temp_path, file_name + '.csv')
             df.to_csv(results_temp_csv_path, index=False)
     
-            results_helper.build_ipynb(results_temp_csv_path, mode_results_path, file_name)
+            file_path = results_helper.build_ipynb(results_temp_csv_path, mode_results_path, file_name)
+            #results_helper.execute_ipynb(file_path)
     except Exception as err:
         print('result_worker: err', err)
     pass
