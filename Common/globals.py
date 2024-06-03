@@ -10,13 +10,16 @@ learn_type_cat_dict = {
 
 algo_type_cat_dict = {
     'gradient-boosting-results': {
-        'isActive': 1
+        'isActive': 1,
+        'name': 'gradient-boosting-results'
     },
     'random-forest-results': {
-        'isActive': 1
+        'isActive': 1,
+        'name': 'random-forest-results'
     },
     'xgboost-results': {
-        'isActive': 1
+        'isActive': 1,
+        'name': 'xgboost-results'
     }
 }
 

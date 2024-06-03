@@ -53,8 +53,6 @@ def build_data_frame(mode, algo, file_name, file_dict_obj):
 
 
 
-
-
 initial_text = """\
 import numpy as np
 import pandas as pd
@@ -82,7 +80,23 @@ def read_csv(file_path):
     line_list.append("df.head()")
     return "\n".join(line_list)
 
-def build_ipynb(csv_path, result_path, file_name):
+def convert_first_3_cols_to_numeric():
+    return "df[df.columns[:3]] = df[df.columns[:3]].apply(pd.to_numeric)"
+
+def print_unique_string_values():
+    line_list = []
+    line_list.append("for col in df.select_dtypes(include=['object']).columns :")
+    line_list.append("\tprint(f'Col - {col} : {df[col].unique()}')")
+    return "\n".join(line_list)
+
+def build_gradient_boosting_result(nb):
+    try:
+        pass
+    except Exception as err:
+        print('err building gradient boost result ipynb')
+        raise err
+
+def build_ipynb(csv_path, result_path, file_name, mode, algo_type):
     try:
         file_path = file_helper.create_path_from_params(result_path, file_name + '.ipynb')
 
@@ -97,6 +111,16 @@ def build_ipynb(csv_path, result_path, file_name):
         nb.cells.append(cell)
 
         cell = nbformat.v4.new_code_cell("df.info()")
+
+        cell = nbformat.v4.new_code_cell(convert_first_3_cols_to_numeric())
+        nb.cells.append(cell)
+
+        cell = nbformat.v4.new_code_cell(print_unique_string_values())
+        nb.cells.append(cell)
+
+        if algo_type == globals.algo_type_cat_dict['gradient-boosting-results']['name']:
+            build_gradient_boosting_result(nb)
+        
         with open(file_path, 'w') as f:
             nbformat.write(nb, f)
 
