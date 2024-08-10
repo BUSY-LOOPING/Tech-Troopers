@@ -47,11 +47,11 @@ def read_files(lst) :
             df = preprocess(pd.read_csv(x))
         else :
             df = preprocess(pd.read_excel(x))
+        if df is not None and len(df) > 0 :
+            df['flightId'] = idx
             
-        df['flightId'] = idx
-        
-        df = create_time_series_features(df)        
-        time_series_data = np.concatenate((time_series_data, df.values), axis=0)
+            df = create_time_series_features(df)        
+            time_series_data = np.concatenate((time_series_data, df.values), axis=0)
     return time_series_data
 
 def predict(lst) :

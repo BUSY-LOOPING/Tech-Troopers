@@ -8,9 +8,11 @@ drone_troopers.egg-info/dependency_links.txt
 drone_troopers.egg-info/requires.txt
 drone_troopers.egg-info/top_level.txt
 drone_troopers/models/__init__.py
+drone_troopers/models/clustering_anomaly_rules_extractor.py
 drone_troopers/models/flight_classifier.py
 drone_troopers/models/samples_labelling_classifier.py
 drone_troopers/real_time/__init__.py
+drone_troopers/real_time/file_upload_predictor.py
 drone_troopers/real_time/real_time_prediction.py
 drone_troopers/report/__init__.py
 drone_troopers/report/generate_report.py

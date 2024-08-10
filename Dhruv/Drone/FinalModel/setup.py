@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='drone_troopers',
-    version='0.0.1',
+    version='0.0.2',
     author='Tech Troopers',
     author_email='dhruvyadav2905@gmail.com',
     description='A module for drone data processing',
@@ -17,6 +17,7 @@ setup(
         'matplotlib',
         'scikit-learn',
         'xgboost',
+        'flask'
         # Example: 'numpy>=1.18.0',
     ],
     classifiers=[

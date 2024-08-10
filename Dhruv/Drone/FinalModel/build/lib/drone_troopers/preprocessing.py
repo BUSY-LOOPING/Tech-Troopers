@@ -4,7 +4,7 @@ import pandas as pd
 
 
 column_patterns = {
-    'Time (s)': r'Time.*s',
+    'Time (s)': r"Time.*s|Time.*seconds|Seconds|['\"]Time.*['\"]",
     'Motor Speed (RPM)': r'Motor.*RPM',
     'Engine Speed (RPM)': r'Engine.*Speed.*RPM',
     'Throttle (%)': r'Throttle.*%',
@@ -77,7 +77,7 @@ def find_consecutive_indices(arr):
 
     return result
 
-def standardize_columns(df, column_patterns, retain_all_columns=False):
+def standardize_columns(df, column_patterns):
     standardized_columns = {}
     for standard_col, pattern in column_patterns.items():
         for col in df.columns:
@@ -86,22 +86,42 @@ def standardize_columns(df, column_patterns, retain_all_columns=False):
                 break
     df = df.rename(columns=standardized_columns)
     
-    return df if retain_all_columns else df[list(column_patterns.keys())]
+    return df[list(column_patterns.keys())]
 
-def preprocess(df, filter_throttle_values=None, retain_all_columns=False) :
+def get_corrupted_samples_idx(df):
+    # Check for NaN values
+    nan_condition = df.isna()
+    
+    # # Check for '?' values
+    # question_mark_condition = df.eq('?')
+    
+    # Check for any string values
+    string_condition = df.map(lambda x: isinstance(x, str))
+    
+    # Combine all conditions using logical OR
+    corrupted_condition = nan_condition | string_condition
+    
+    # Get indices of rows with any True value in the combined condition
+    corrupted_indices = corrupted_condition.any(axis=1)
+    
+    return corrupted_indices[corrupted_indices == True].index.tolist()
+
+def preprocess(df, filter_throttle_values=None, return_corrupted=False) :
     df = df.copy()
-    df = standardize_columns(df, column_patterns, retain_all_columns)
+    df = standardize_columns(df, column_patterns)
     if filter_throttle_values is not None and df['Throttle (%)'].max() < filter_throttle_values :
         return None
-    if retain_all_columns :
-        time_col_original = df['Time (s)']
-    df = df.dropna()
+    
+    df = df.drop(columns=[col for col in df.columns if col.startswith('Unnamed:')])
+    corrupted_idx = get_corrupted_samples_idx(df)
+    df = df.drop(index=corrupted_idx)
     reference_date = pd.to_datetime('1970-01-01')
     df['Time (s)'] = reference_date + pd.to_timedelta(df['Time (s)'], unit='s')
     df = df.set_index('Time (s)')
-    if retain_all_columns :
-        df = pd.concat([time_col_original, df], axis=1)
+    if return_corrupted :
+        return df, corrupted_idx
     return df
+
 
 def create_time_series_features(df) :
     df = df.copy()

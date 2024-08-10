@@ -105,7 +105,10 @@ del data_model
 # del data_model
 
 # Create a Dash web application
-app = Dash(__name__)
+app = Dash(__name__, 
+            meta_tags=[
+        {"name": "viewport", "content": "width=device-width, initial-scale=1"}
+    ])
 
 # Define the layout of the application with a 2x2 grid
 app.layout = html.Div(
